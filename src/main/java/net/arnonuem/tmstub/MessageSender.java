@@ -1,5 +1,7 @@
 package net.arnonuem.tmstub;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,8 @@ import com.google.gson.Gson;
 
 @Component
 public class MessageSender {
+	
+	private static final Logger log = LoggerFactory.getLogger( MessageSender.class );
 	
 	private Gson gson = new Gson();
 	
@@ -28,6 +32,16 @@ public class MessageSender {
 			 //no interest
 			 System.err.println( e );
 		 });
+	
 	}
 	
+	
+	public void sendMessage( Method method, Message message ) {
+		JSONRPC rpc = new StringParam( method, gson.toJson(message).getBytes() );
+		
+		 socketClient.sendMessage(rpc, e -> {
+			 //no interest
+			 System.err.println( e );
+		 });
+	}
 }
