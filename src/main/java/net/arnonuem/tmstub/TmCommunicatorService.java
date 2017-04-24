@@ -3,7 +3,7 @@ package net.arnonuem.tmstub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.github.jtmsp.websocket.Websocket;
 import com.github.jtmsp.websocket.jsonrpc.JSONRPC;
@@ -11,19 +11,29 @@ import com.github.jtmsp.websocket.jsonrpc.Method;
 import com.github.jtmsp.websocket.jsonrpc.calls.StringParam;
 import com.google.gson.Gson;
 
-@Component
-public class MessageSender {
+@Service
+public class TmCommunicatorService {
 	
-	private static final Logger log = LoggerFactory.getLogger( MessageSender.class );
-	
-	private Gson gson = new Gson();
+	private static final Logger log = LoggerFactory.getLogger( TmCommunicatorService.class );
 	
 	private final Websocket socketClient;
 	
+	private Gson gson = new Gson();
+	
 	@Autowired
-	public MessageSender( Websocket socketClient ) {
+	public TmCommunicatorService( Websocket socketClient ) {
 		this.socketClient = socketClient;
 	}
+	
+	
+	public void init() {
+		log.info( "Connecting websocket" );
+		if( !socketClient.isOpen() )
+			socketClient.reconnectWebsocket();
+		else
+			throw new RuntimeException( "Socket connection already initialized" );
+	}
+	
 	
 	public void sendMessage( Message message ) {
 		JSONRPC rpc = new StringParam( Method.BROADCAST_TX_ASYNC, gson.toJson(message).getBytes() );
