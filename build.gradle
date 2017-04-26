@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.4.6.RELEASE'
+		springBootVersion = '1.5.3.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -42,8 +42,6 @@ dependencies {
 	
     // test scope
     testImplementation 'junit:junit:4.12'
-    
-	
 }
 
 jar {
