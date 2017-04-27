@@ -16,6 +16,7 @@ public class ServerManagementResource {
 
 	private final TmCommunicatorService tmCommunicator;
 
+
 	@Autowired
 	public ServerManagementResource( TmCommunicatorService tmCommunicator ) {
 		this.tmCommunicator = tmCommunicator;
@@ -23,19 +24,13 @@ public class ServerManagementResource {
 
 
 	@GetMapping( "/status" )
-	public void status() {
-		tmCommunicator.sendMessage( Method.STATUS, null, res -> {
-			JSONRPCResult result = (JSONRPCResult) res;
-			System.err.println( result );
-		} );
+	public JSONRPCResult status() {
+		return tmCommunicator.sendMessage( Method.STATUS, null );
 	}
 
 
 	@GetMapping( "/netinfo" )
-	public void netInfo() {
-		tmCommunicator.sendMessage( Method.NET_INFO, null, res -> {
-			JSONRPCResult result = (JSONRPCResult) res;
-			System.err.println( result );
-		} );
+	public JSONRPCResult netInfo() {
+		return tmCommunicator.sendMessage( Method.NET_INFO, null );
 	}
 }
