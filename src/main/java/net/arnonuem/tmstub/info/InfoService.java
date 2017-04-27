@@ -12,8 +12,8 @@ public class InfoService {
 	private static final Logger log = LoggerFactory.getLogger( InfoService.class );
 	
 	public ResponseInfo noop() {
-		log.trace("ResponseInfo default listener implementation");
-		return ResponseInfo.newBuilder().setData("NO_INFO").build();
+		log.debug( "ResponseInfo default listener implementation" );
+		return ResponseInfo.newBuilder().setData( "NO_INFO" ).build();
 	}
 	
 }

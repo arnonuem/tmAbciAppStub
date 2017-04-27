@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.github.jtendermint.jabci.api.IEcho;
 import com.github.jtendermint.jabci.api.IFlush;
-import com.github.jtendermint.jabci.types.Types.CodeType;
 import com.github.jtendermint.jabci.types.Types.RequestBeginBlock;
 import com.github.jtendermint.jabci.types.Types.RequestCheckTx;
 import com.github.jtendermint.jabci.types.Types.RequestCommit;
@@ -31,7 +30,15 @@ import com.github.jtendermint.jabci.types.Types.ResponseInitChain;
 import com.github.jtendermint.jabci.types.Types.ResponseQuery;
 import com.github.jtendermint.jabci.types.Types.ResponseSetOption;
 
+import net.arnonuem.tmstub.consensus.BeginBlockService;
+import net.arnonuem.tmstub.consensus.CommitService;
+import net.arnonuem.tmstub.consensus.DeliverTxService;
+import net.arnonuem.tmstub.consensus.EndBlockService;
+import net.arnonuem.tmstub.consensus.InitChainService;
 import net.arnonuem.tmstub.info.InfoService;
+import net.arnonuem.tmstub.info.QueryService;
+import net.arnonuem.tmstub.info.SetOptionService;
+import net.arnonuem.tmstub.mempool.CheckTxService;
 
 @Component
 public class TSockListener implements InfoQueryListener, MempoolListener, ConsensusListener, IFlush, IEcho {
@@ -40,12 +47,27 @@ public class TSockListener implements InfoQueryListener, MempoolListener, Consen
 
 	private final TmCommunicatorService svcTmCommunication;
 	private final InfoService svcInfo;
-
+	private final QueryService svcQuery;
+	private final SetOptionService svcSetOption;
+	private final CheckTxService svcCheckTx;
+	private final BeginBlockService svcBeginBlock;
+	private final CommitService svcCommit;
+	private final DeliverTxService svcDeliverTx;
+	private final EndBlockService svcEndBlock;
+	private final InitChainService svcInitChain;
 
 	@Autowired
-	public TSockListener( TmCommunicatorService svcTmCommunication, InfoService svcInfo ) {
+	public TSockListener( TmCommunicatorService svcTmCommunication, InfoService svcInfo, QueryService svcQuery, SetOptionService svcSetOption, CheckTxService svcCheckTx, BeginBlockService svcBeginBlock, CommitService svcCommit, DeliverTxService svcDeliverTx, EndBlockService svcEndBlock, InitChainService svcInitChain ) {
 		this.svcTmCommunication = svcTmCommunication;
 		this.svcInfo = svcInfo;
+		this.svcQuery = svcQuery;
+		this.svcSetOption = svcSetOption;
+		this.svcCheckTx = svcCheckTx;
+		this.svcBeginBlock = svcBeginBlock;
+		this.svcCommit = svcCommit;
+		this.svcDeliverTx = svcDeliverTx;
+		this.svcEndBlock = svcEndBlock;
+		this.svcInitChain = svcInitChain;
 	}
 	
 	
@@ -58,57 +80,49 @@ public class TSockListener implements InfoQueryListener, MempoolListener, Consen
 
 	@Override
 	public ResponseQuery requestQuery( RequestQuery req ) {
-		log.debug( "ResponseQuery default listener implementation" );
-		return ResponseQuery.newBuilder().setCode( CodeType.OK ).build();
+		return svcQuery.noop();
 	}
 
 
 	@Override
 	public ResponseSetOption requestSetOption( RequestSetOption req ) {
-		log.debug( "ResponseSetOption default listener implementation" );
-		return ResponseSetOption.newBuilder().build();
+		return svcSetOption.noop();
 	}
 	
 	
 	@Override
 	public ResponseCheckTx requestCheckTx( RequestCheckTx req ) {
-		log.debug( "ResponseCheckTx default listener implementation" );
-		return ResponseCheckTx.newBuilder().setCode( CodeType.OK ).build();
+		return svcCheckTx.noop();
 	}
 	
 	
 	@Override
 	public ResponseInitChain requestInitChain( RequestInitChain req ) {
-		log.debug( "ResponseInitChain default listener implementation" );
-		return ResponseInitChain.newBuilder().build();
+		return svcInitChain.noop();
 	}
 	
 	
 	@Override
 	public ResponseBeginBlock requestBeginBlock( RequestBeginBlock req ) {
-		log.trace( "ResponseBeginBlock default listener implementation" );
-		return ResponseBeginBlock.newBuilder().build();
+		return svcBeginBlock.noop();
 	}
 	
 	
 	@Override
 	public ResponseDeliverTx receivedDeliverTx( RequestDeliverTx req ) {
-		log.debug( "ResponseDeliverTx default listener implementation" );
-		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
+		return svcDeliverTx.noop();
 	}
 	
 	
 	@Override
 	public ResponseEndBlock requestEndBlock( RequestEndBlock req ) {
-		log.trace( "ResponseEndBlock default listener implementation" );
-		return ResponseEndBlock.newBuilder().build();
+		return svcEndBlock.noop();
 	}
 	
 
 	@Override
 	public ResponseCommit requestCommit( RequestCommit requestCommit ) {
-		log.trace( "ResponseCommit default listener implementation" );
-		return ResponseCommit.newBuilder().setCode( CodeType.OK ).build();
+		return svcCommit.noop();
 	}
 	
 	
