@@ -2,6 +2,8 @@ package net.arnonuem.tmstub;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.github.jtendermint.jabci.api.IBeginBlock;
 import com.github.jtendermint.jabci.api.ICheckTx;
@@ -38,74 +40,99 @@ import com.github.jtendermint.jabci.types.Types.ResponseInitChain;
 import com.github.jtendermint.jabci.types.Types.ResponseQuery;
 import com.github.jtendermint.jabci.types.Types.ResponseSetOption;
 
+import net.arnonuem.tmstub.info.InfoService;
+import net.arnonuem.tmstub.sys.TmCommunicatorService;
+
 //TODO workaround since there is an issue with ABCIAPI
-public class TSockListener /*implements ABCIAPI*/implements IDeliverTx, IBeginBlock, ICheckTx, ICommit, IEndBlock, IFlush, IInfo, IInitChain, IQuery, ISetOption, IEcho {
+@Component
+public class TSockListener /* implements ABCIAPI */ implements IDeliverTx, IBeginBlock, ICheckTx, ICommit, IEndBlock, IFlush, IInfo, IInitChain, IQuery, ISetOption, IEcho {
 
 	private static final Logger log = LoggerFactory.getLogger( TSockListener.class );
-	
-    @Override
-    public ResponseDeliverTx receivedDeliverTx(RequestDeliverTx req) {
-        log.debug("ResponseDeliverTx DefaultFallbackListener");
-        return ResponseDeliverTx.newBuilder().setCode(CodeType.OK).build();
-    }
 
-    @Override
-    public ResponseFlush requestFlush(RequestFlush reqfl) {
-        log.debug("ResponseFlush DefaultFallbackListener");
-        return ResponseFlush.newBuilder().build();
-    }
+	private final TmCommunicatorService svcTmCommunication;
+	private final InfoService svcInfo;
 
-    @Override
-    public ResponseCommit requestCommit(RequestCommit requestCommit) {
-        log.debug("ResponseCommit DefaultFallbackListener");
-        return ResponseCommit.newBuilder().setCode(CodeType.OK).build();
-    }
 
-    @Override
-    public ResponseBeginBlock requestBeginBlock(RequestBeginBlock req) {
-        log.debug("ResponseBeginBlock DefaultFallbackListener");
-        return ResponseBeginBlock.newBuilder().build();
-    }
+	@Autowired
+	public TSockListener( TmCommunicatorService svcTmCommunication, InfoService svcInfo ) {
+		this.svcTmCommunication = svcTmCommunication;
+		this.svcInfo = svcInfo;
+	}
 
-    @Override
-    public ResponseCheckTx requestCheckTx(RequestCheckTx req) {
-        log.debug("ResponseCheckTx DefaultFallbackListener");
-        return ResponseCheckTx.newBuilder().setCode(CodeType.OK).build();
-    }
 
-    @Override
-    public ResponseEndBlock requestEndBlock(RequestEndBlock req) {
-        log.debug("ResponseEndBlock DefaultFallbackListener");
-        return ResponseEndBlock.newBuilder().build();
-    }
+	@Override
+	public ResponseDeliverTx receivedDeliverTx( RequestDeliverTx req ) {
+		log.debug( "ResponseDeliverTx default listener implementation" );
+		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
+	}
 
-    @Override
-    public ResponseInfo requestInfo(RequestInfo req) {
-        log.debug("ResponseInfo DefaultFallbackListener");
-        return ResponseInfo.newBuilder().setData("NO_INFO").build();
-    }
 
-    @Override
-    public ResponseInitChain requestInitChain(RequestInitChain req) {
-        log.debug("ResponseInitChain DefaultFallbackListener");
-        return ResponseInitChain.newBuilder().build();
-    }
+	@Override
+	public ResponseFlush requestFlush( RequestFlush reqfl ) {
+		log.trace( "ResponseFlush default listener implementation" );
+		return ResponseFlush.newBuilder().build();
+	}
 
-    @Override
-    public ResponseQuery requestQuery(RequestQuery req) {
-        log.debug("ResponseQuery DefaultFallbackListener");
-        return ResponseQuery.newBuilder().setCode(CodeType.OK).build();
-    }
 
-    @Override
-    public ResponseSetOption requestSetOption(RequestSetOption req) {
-        log.debug("ResponseSetOption DefaultFallbackListener");
-        return ResponseSetOption.newBuilder().build();
-    }
+	@Override
+	public ResponseCommit requestCommit( RequestCommit requestCommit ) {
+		log.trace( "ResponseCommit default listener implementation" );
+		return ResponseCommit.newBuilder().setCode( CodeType.OK ).build();
+	}
 
-    @Override
-    public ResponseEcho requestEcho(RequestEcho req) {
-        log.debug("ResponseEcho DefaultFallbackListener");
-        return ResponseEcho.newBuilder().setMessage("NOECHO").build();
-    }
+
+	@Override
+	public ResponseBeginBlock requestBeginBlock( RequestBeginBlock req ) {
+		log.trace( "ResponseBeginBlock default listener implementation" );
+		return ResponseBeginBlock.newBuilder().build();
+	}
+
+
+	@Override
+	public ResponseCheckTx requestCheckTx( RequestCheckTx req ) {
+		log.debug( "ResponseCheckTx default listener implementation" );
+		return ResponseCheckTx.newBuilder().setCode( CodeType.OK ).build();
+	}
+
+
+	@Override
+	public ResponseEndBlock requestEndBlock( RequestEndBlock req ) {
+		log.trace( "ResponseEndBlock default listener implementation" );
+		return ResponseEndBlock.newBuilder().build();
+	}
+
+
+	@Override
+	public ResponseInfo requestInfo( RequestInfo req ) {
+		svcTmCommunication.init(); // open a websocket to be able to send requests to tendermint
+		return svcInfo.noop();
+	}
+
+
+	@Override
+	public ResponseInitChain requestInitChain( RequestInitChain req ) {
+		log.debug( "ResponseInitChain default listener implementation" );
+		return ResponseInitChain.newBuilder().build();
+	}
+
+
+	@Override
+	public ResponseQuery requestQuery( RequestQuery req ) {
+		log.debug( "ResponseQuery default listener implementation" );
+		return ResponseQuery.newBuilder().setCode( CodeType.OK ).build();
+	}
+
+
+	@Override
+	public ResponseSetOption requestSetOption( RequestSetOption req ) {
+		log.debug( "ResponseSetOption default listener implementation" );
+		return ResponseSetOption.newBuilder().build();
+	}
+
+
+	@Override
+	public ResponseEcho requestEcho( RequestEcho req ) {
+		log.debug( "ResponseEcho default listener implementation" );
+		return ResponseEcho.newBuilder().setMessage( "NOECHO" ).build();
+	}
 }

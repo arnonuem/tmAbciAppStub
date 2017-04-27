@@ -38,7 +38,7 @@ dependencies {
 	implementation ('com.github.jTendermint:jabci:master') {
 		exclude module : 'slf4j-simple'
 	}
-	implementation 'com.github.jTendermint:websocket:master'
+	implementation 'com.github.jtendermint:websocket:master-SNAPSHOT'
 	
     // test scope
     testImplementation 'junit:junit:4.12'

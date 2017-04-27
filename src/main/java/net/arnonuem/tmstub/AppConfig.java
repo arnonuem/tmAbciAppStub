@@ -16,17 +16,21 @@ public class AppConfig {
 		return new Websocket( new WebsocketStatus() {
 			@Override
 			public void wasOpened() {
-				System.err.println("WS was opened");
+				System.err.println( "WS was opened" );
 			}
+
+
 			@Override
-			public void wasClosed(CloseReason cr) {
-				System.err.println("WS was closed: " + cr.getReasonPhrase() );
+			public void wasClosed( CloseReason cr ) {
+				System.err.println( "WS was closed: " + cr.getReasonPhrase() );
 			}
+
+
 			@Override
 			public void hadError( Throwable t ) {
 				throw new RuntimeException( t );
 			}
-		});
+		} );
 	}
-	
+
 }
