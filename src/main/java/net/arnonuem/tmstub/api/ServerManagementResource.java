@@ -1,4 +1,4 @@
-package net.arnonuem.tmstub;
+package net.arnonuem.tmstub.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

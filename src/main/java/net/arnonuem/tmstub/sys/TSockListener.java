@@ -1,4 +1,4 @@
-package net.arnonuem.tmstub;
+package net.arnonuem.tmstub.sys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,6 @@ import com.github.jtendermint.jabci.types.Types.ResponseQuery;
 import com.github.jtendermint.jabci.types.Types.ResponseSetOption;
 
 import net.arnonuem.tmstub.info.InfoService;
-import net.arnonuem.tmstub.sys.TmCommunicatorService;
 
 //TODO workaround since there is an issue with ABCIAPI
 @Component

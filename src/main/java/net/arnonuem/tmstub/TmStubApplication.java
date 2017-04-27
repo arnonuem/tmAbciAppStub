@@ -9,6 +9,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.github.jtendermint.jabci.socket.TSocket;
 
+import net.arnonuem.tmstub.sys.TSockListener;
+
 @SpringBootApplication
 public class TmStubApplication {
 

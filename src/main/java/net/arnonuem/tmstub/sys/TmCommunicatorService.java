@@ -12,11 +12,9 @@ import com.github.jtmsp.websocket.WSResponse;
 import com.github.jtmsp.websocket.Websocket;
 import com.github.jtmsp.websocket.jsonrpc.JSONRPC;
 import com.github.jtmsp.websocket.jsonrpc.Method;
+import com.github.jtmsp.websocket.jsonrpc.calls.EmptyParam;
 import com.github.jtmsp.websocket.jsonrpc.calls.StringParam;
 import com.google.gson.Gson;
-
-import net.arnonuem.tmstub.EmptyParam;
-import net.arnonuem.tmstub.Message;
 
 @Service
 public class TmCommunicatorService {

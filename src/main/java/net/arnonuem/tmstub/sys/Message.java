@@ -1,4 +1,4 @@
-package net.arnonuem.tmstub;
+package net.arnonuem.tmstub.sys;
 
 public class Message {
 
