@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.jtmsp.websocket.Websocket;
+import com.github.jtmsp.websocket.WebsocketException;
 import com.github.jtmsp.websocket.jsonrpc.JSONRPC;
 import com.github.jtmsp.websocket.jsonrpc.JSONRPCResult;
 import com.github.jtmsp.websocket.jsonrpc.Method;
@@ -43,7 +44,11 @@ public class TmCommunicatorService {
 		Executors.newScheduledThreadPool( 1 ).schedule( () -> {
 			if( !socketClient.isOpen() ) {
 				log.info( "Connecting websocket" );
-				socketClient.reconnectWebsocket();
+				try {
+					socketClient.reconnectWebsocket();
+				} catch (WebsocketException e) {
+					log.error( e.getMessage(), e );
+				}
 			} else
 				throw new RuntimeException( "Socket connection already initialized" );
 		}, time, unit );
