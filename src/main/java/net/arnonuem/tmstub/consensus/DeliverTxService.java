@@ -28,7 +28,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.github.jtendermint.jabci.types.Types.CodeType;
+import com.github.jtendermint.jabci.types.Types.RequestDeliverTx;
 import com.github.jtendermint.jabci.types.Types.ResponseDeliverTx;
+import com.google.gson.Gson;
+
+import net.arnonuem.tmstub.sys.Message;
 
 /**
  * 
@@ -39,8 +43,14 @@ public class DeliverTxService {
 
 	private static final Logger log = LoggerFactory.getLogger( DeliverTxService.class );
 	
-	public ResponseDeliverTx noop() {
-		log.debug( "ResponseDeliverTx default listener implementation" );
+	private Gson gson = new Gson();
+	
+	public ResponseDeliverTx process( RequestDeliverTx req ) {
+		log.debug( "Processing incoming message" );
+		String data = new String( req.getTx().toByteArray() );
+		Message message = gson.fromJson( data, Message.class );
+		//TODO fire event or do something else with this message
+		log.debug( message.toString() );
 		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
 	}
 	

@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.github.jtmsp.websocket.Websocket;
+import com.github.jtmsp.websocket.WebsocketException;
 import com.github.jtmsp.websocket.WebsocketStatus;
 
 /**
@@ -53,7 +54,16 @@ public class AppConfig {
 
 			@Override
 			public void wasClosed( CloseReason cr ) {
-				log.info( "WS was closed: " + cr.getReasonPhrase() );
+				if( !cr.getReasonPhrase().isEmpty() ) {
+					log.warn( "WS was closed: " + cr.getReasonPhrase() );
+					try {
+						websocket().reconnectWebsocket();
+					} catch( WebsocketException e ) {
+						e.printStackTrace();
+					}
+				} else {
+					log.warn( "WS was closed" );
+				}
 			}
 
 

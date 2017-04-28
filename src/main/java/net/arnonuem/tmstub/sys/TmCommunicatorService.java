@@ -94,7 +94,7 @@ public class TmCommunicatorService {
 
 	public JSONRPCResult sendMessage( Method method, Message message ) {
 		CompletableFuture<JSONRPCResult> future = new CompletableFuture<>();
-	
+		
 		JSONRPC rpc = message != null ? new StringParam( method, gson.toJson( message ).getBytes() ) : new EmptyParam( method );
 		socketClient.sendMessage( rpc, res -> {		
 			future.complete( (JSONRPCResult)res );

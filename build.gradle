@@ -22,7 +22,7 @@ repositories {
 	mavenCentral()
 	maven {
 		url 'https://jitpack.io'
-	}	
+	}
 }
 
 
@@ -31,10 +31,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	
-	implementation ('com.github.jTendermint:jabci:master') {
+	implementation ('com.github.jTendermint:jabci:v0.9.0') {
 		exclude module : 'slf4j-simple'
 	}
-	implementation 'com.github.jtendermint:websocket:master-SNAPSHOT'
+
+	//implementation 'com.github.jtendermint:websocket:a1dc380'
+	implementation 'com.github.jtendermint:websocket:0.0.2-beta'
 	
     // test scope
     testImplementation 'junit:junit:4.12'

@@ -137,7 +137,7 @@ public class TSockListener implements InfoQueryListener, MempoolListener, Consen
 	
 	@Override
 	public ResponseDeliverTx receivedDeliverTx( RequestDeliverTx req ) {
-		return svcDeliverTx.noop();
+		return svcDeliverTx.process( req );
 	}
 	
 	

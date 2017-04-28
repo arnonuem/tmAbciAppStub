@@ -25,12 +25,18 @@ package net.arnonuem.tmstub.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.jtmsp.websocket.jsonrpc.JSONRPCResult;
 import com.github.jtmsp.websocket.jsonrpc.Method;
+import com.google.gson.internal.LinkedTreeMap;
 
+import net.arnonuem.tmstub.statistics.Status;
+import net.arnonuem.tmstub.statistics.StatusConverter;
+import net.arnonuem.tmstub.sys.Message;
 import net.arnonuem.tmstub.sys.TmCommunicatorService;
 
 /**
@@ -42,11 +48,12 @@ import net.arnonuem.tmstub.sys.TmCommunicatorService;
 public class ServerManagementResource {
 
 	private final TmCommunicatorService tmCommunicator;
-
+	private final StatusConverter statusConverter;
 
 	@Autowired
-	public ServerManagementResource( TmCommunicatorService tmCommunicator ) {
+	public ServerManagementResource( TmCommunicatorService tmCommunicator, StatusConverter statusConverter) {
 		this.tmCommunicator = tmCommunicator;
+		this.statusConverter = statusConverter;
 	}
 
 
@@ -60,4 +67,30 @@ public class ServerManagementResource {
 	public JSONRPCResult netInfo() {
 		return tmCommunicator.sendMessage( Method.NET_INFO, null );
 	}
+	
+	
+	@GetMapping( "/statistics" )
+	public Status statistics() {
+		JSONRPCResult rpcResult = tmCommunicator.sendMessage( Method.STATUS, null );
+		LinkedTreeMap<?,?> map = (LinkedTreeMap<?,?>)rpcResult.result.get(1);
+		return statusConverter.convert( map );
+	}
+
+	
+	@PostMapping( "message" )
+	public String message( @RequestParam("data") String data ) {
+    JSONRPCResult rpc = tmCommunicator.sendMessage( Method.BROADCAST_TX_ASYNC, new Message( "", "", data ) );
+    System.err.println( rpc );
+    return "Message sent.";
+	}
+	
 }
+
+
+
+
+
+
+
+
+
