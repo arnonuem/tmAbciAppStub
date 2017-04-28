@@ -34,9 +34,9 @@ import com.github.jtmsp.websocket.jsonrpc.JSONRPCResult;
 import com.github.jtmsp.websocket.jsonrpc.Method;
 import com.google.gson.internal.LinkedTreeMap;
 
-import net.arnonuem.tmstub.statistics.Status;
-import net.arnonuem.tmstub.statistics.StatusConverter;
 import net.arnonuem.tmstub.sys.Message;
+import net.arnonuem.tmstub.sys.ApplicationState;
+import net.arnonuem.tmstub.sys.ApplicationStateConverter;
 import net.arnonuem.tmstub.sys.TmCommunicatorService;
 
 /**
@@ -48,12 +48,12 @@ import net.arnonuem.tmstub.sys.TmCommunicatorService;
 public class ServerManagementResource {
 
 	private final TmCommunicatorService tmCommunicator;
-	private final StatusConverter statusConverter;
+	private final ApplicationStateConverter appStateConverter;
 
 	@Autowired
-	public ServerManagementResource( TmCommunicatorService tmCommunicator, StatusConverter statusConverter) {
+	public ServerManagementResource( TmCommunicatorService tmCommunicator, ApplicationStateConverter appStateConverter) {
 		this.tmCommunicator = tmCommunicator;
-		this.statusConverter = statusConverter;
+		this.appStateConverter = appStateConverter;
 	}
 
 
@@ -70,10 +70,10 @@ public class ServerManagementResource {
 	
 	
 	@GetMapping( "/statistics" )
-	public Status statistics() {
+	public ApplicationState statistics() {
 		JSONRPCResult rpcResult = tmCommunicator.sendMessage( Method.STATUS, null );
 		LinkedTreeMap<?,?> map = (LinkedTreeMap<?,?>)rpcResult.result.get(1);
-		return statusConverter.convert( map );
+		return appStateConverter.convert( map );
 	}
 
 	
