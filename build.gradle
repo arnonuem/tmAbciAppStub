@@ -37,7 +37,9 @@ dependencies {
 
 	//implementation 'com.github.jtendermint:websocket:a1dc380'
 	implementation 'com.github.jtendermint:websocket:0.0.2-beta'
-	
+
+	implementation 'org.cryptacular:cryptacular:1.2.0'
+		
     // test scope
     testImplementation 'junit:junit:4.12'
 }

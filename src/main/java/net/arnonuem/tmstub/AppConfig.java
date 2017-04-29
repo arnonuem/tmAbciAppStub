@@ -25,6 +25,9 @@ package net.arnonuem.tmstub;
 
 import javax.websocket.CloseReason;
 
+import org.cryptacular.bean.EncodingHashBean;
+import org.cryptacular.spec.CodecSpec;
+import org.cryptacular.spec.DigestSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -72,6 +75,15 @@ public class AppConfig {
 				throw new RuntimeException( t );
 			}
 		} );
+	}
+	
+	@Bean
+	public EncodingHashBean encodingHashBean() {
+		EncodingHashBean bean = new EncodingHashBean();
+		bean.setDigestSpec( new DigestSpec( "SHA3", 256 ) );
+		bean.setCodecSpec( CodecSpec.HEX );
+		bean.setIterations( 5 );
+		return bean;
 	}
 
 }
