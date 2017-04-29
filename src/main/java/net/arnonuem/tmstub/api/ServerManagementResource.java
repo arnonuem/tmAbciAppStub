@@ -23,6 +23,8 @@
  */
 package net.arnonuem.tmstub.api;
 
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,10 +36,11 @@ import com.github.jtmsp.websocket.jsonrpc.JSONRPCResult;
 import com.github.jtmsp.websocket.jsonrpc.Method;
 import com.google.gson.internal.LinkedTreeMap;
 
-import net.arnonuem.tmstub.sys.Message;
 import net.arnonuem.tmstub.sys.ApplicationState;
 import net.arnonuem.tmstub.sys.ApplicationStateConverter;
+import net.arnonuem.tmstub.sys.Message;
 import net.arnonuem.tmstub.sys.TmCommunicatorService;
+import net.arnonuem.tmstub.sys.hash.HashUtil;
 
 /**
  * 
@@ -49,11 +52,13 @@ public class ServerManagementResource {
 
 	private final TmCommunicatorService tmCommunicator;
 	private final ApplicationStateConverter appStateConverter;
-
+	private final HashUtil hashUtil;
+	
 	@Autowired
-	public ServerManagementResource( TmCommunicatorService tmCommunicator, ApplicationStateConverter appStateConverter) {
+	public ServerManagementResource( TmCommunicatorService tmCommunicator, ApplicationStateConverter appStateConverter, HashUtil hashUtil ) {
 		this.tmCommunicator = tmCommunicator;
 		this.appStateConverter = appStateConverter;
+		this.hashUtil = hashUtil;
 	}
 
 
@@ -78,10 +83,11 @@ public class ServerManagementResource {
 
 	
 	@PostMapping( "message" )
-	public String message( @RequestParam("data") String data ) {
-    JSONRPCResult rpc = tmCommunicator.sendMessage( Method.BROADCAST_TX_ASYNC, new Message( "", "", data ) );
-    System.err.println( rpc );
-    return "Message sent.";
+	public String message( @RequestParam("data") String data ) throws NoSuchAlgorithmException {
+		String bob = hashUtil.makeHash( "Bob" );
+		String alice = hashUtil.makeHash( "Alice" );
+		tmCommunicator.sendMessage( Method.BROADCAST_TX_ASYNC, new Message( bob, alice, data ) );
+		return "Message sent. See log for message content.";
 	}
 	
 }

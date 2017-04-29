@@ -25,6 +25,7 @@ package net.arnonuem.tmstub.consensus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.jtendermint.jabci.types.Types.CodeType;
@@ -33,6 +34,7 @@ import com.github.jtendermint.jabci.types.Types.ResponseDeliverTx;
 import com.google.gson.Gson;
 
 import net.arnonuem.tmstub.sys.Message;
+import net.arnonuem.tmstub.sys.hash.HashUtil;
 
 /**
  * 
@@ -45,12 +47,18 @@ public class DeliverTxService {
 	
 	private Gson gson = new Gson();
 	
+	@Autowired HashUtil hashUtil;
+	
 	public ResponseDeliverTx process( RequestDeliverTx req ) {
 		log.debug( "Processing incoming message" );
 		String data = new String( req.getTx().toByteArray() );
 		Message message = gson.fromJson( data, Message.class );
 		//TODO fire event or do something else with this message
 		log.debug( message.toString() );
+		
+		if( hashUtil.compare( message.sender, "Bob" ) && hashUtil.compare( message.receiver, "Alice" ) ) {
+			log.debug( "Sender was Bob and receiver is Alice" );
+		}
 		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
 	}
 	
