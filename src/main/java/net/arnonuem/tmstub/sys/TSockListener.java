@@ -131,7 +131,7 @@ public class TSockListener implements InfoQueryListener, MempoolListener, Consen
 	
 	@Override
 	public ResponseBeginBlock requestBeginBlock( RequestBeginBlock req ) {
-		return svcBeginBlock.noop();
+		return svcBeginBlock.process( req );
 	}
 	
 	

@@ -23,6 +23,8 @@
  */
 package net.arnonuem.tmstub;
 
+import java.io.File;
+
 import javax.websocket.CloseReason;
 
 import org.cryptacular.bean.EncodingHashBean;
@@ -30,8 +32,14 @@ import org.cryptacular.spec.CodecSpec;
 import org.cryptacular.spec.DigestSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.channel.MessageChannels;
+import org.springframework.integration.file.dsl.Files;
+import org.springframework.messaging.SubscribableChannel;
 
 import com.github.jtmsp.websocket.Websocket;
 import com.github.jtmsp.websocket.WebsocketException;
@@ -86,4 +94,27 @@ public class AppConfig {
 		return bean;
 	}
 
+	
+	@Bean
+	SubscribableChannel pubSubChannel() {
+		return MessageChannels.publishSubscribe().get();
+	}
+	
+	
+
+	/**
+	 * just for testing - has nothing to do with Tendermint and should be removed soon.
+	 */
+	@Bean
+	IntegrationFlow integrationFlow( @Value("${input-dir:file://${user.home}/Desktop/in}") File in ) {
+		long delay = 1000L;
+		return IntegrationFlows.from( Files.inboundAdapter( in )
+				.autoCreateDirectory( true ), poller -> poller.poller( spec -> spec.fixedRate( delay ) ) )
+				.transform( File.class, File::getAbsolutePath )
+				.channel( pubSubChannel() )
+				.get();
+	}
+
+	
+	
 }

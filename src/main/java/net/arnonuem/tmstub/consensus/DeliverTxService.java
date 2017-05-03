@@ -49,6 +49,11 @@ public class DeliverTxService {
 	
 	@Autowired HashUtil hashUtil;
 	
+	public ResponseDeliverTx noop() {
+		log.trace( "ResponseDeliverTx default listener implementation" );
+		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
+	}
+	
 	public ResponseDeliverTx process( RequestDeliverTx req ) {
 		log.debug( "Processing incoming message" );
 		String data = new String( req.getTx().toByteArray() );

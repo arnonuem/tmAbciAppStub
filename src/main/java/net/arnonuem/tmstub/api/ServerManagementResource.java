@@ -26,7 +26,11 @@ package net.arnonuem.tmstub.api;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +45,7 @@ import net.arnonuem.tmstub.sys.ApplicationStateConverter;
 import net.arnonuem.tmstub.sys.Message;
 import net.arnonuem.tmstub.sys.TmCommunicatorService;
 import net.arnonuem.tmstub.sys.hash.HashUtil;
+import reactor.core.publisher.Flux;
 
 /**
  * 
@@ -54,6 +59,8 @@ public class ServerManagementResource {
 	private final ApplicationStateConverter appStateConverter;
 	private final HashUtil hashUtil;
 	
+	@Autowired SubscribableChannel pubSubChannel;
+	
 	@Autowired
 	public ServerManagementResource( TmCommunicatorService tmCommunicator, ApplicationStateConverter appStateConverter, HashUtil hashUtil ) {
 		this.tmCommunicator = tmCommunicator;
@@ -62,6 +69,31 @@ public class ServerManagementResource {
 	}
 
 
+	/**
+	 * just for testing - has nothing to do with Tendermint and should be removed soon.
+	 */
+	@GetMapping( value = "/files/{name}", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
+	public Flux<String> files( @PathVariable String name ) {
+		return Flux.create( sink -> {
+			MessageHandler handler = msg -> sink.next( String.class.cast( msg.getPayload() ) );
+			sink.onCancel( () -> pubSubChannel.unsubscribe( handler ) );
+			pubSubChannel.subscribe( handler );
+		} );
+	}
+	
+	
+	/**
+	 * SSE Emitter - make sure proper javascript is in place or just do a 'curl http://localhost:8090/api/bcinfo' and wait for it ;) 
+	 */
+	@GetMapping( value = "/bcinfo", produces = MediaType.TEXT_EVENT_STREAM_VALUE ) 
+	public Flux<String> bcinfo() {
+		return Flux.create( sink -> {
+			MessageHandler handler = msg -> sink.next( String.class.cast( msg.getPayload() ) );
+			pubSubChannel.subscribe( handler );
+		} );
+	}
+	
+	
 	@GetMapping( "/status" )
 	public JSONRPCResult status() {
 		return tmCommunicator.sendMessage( Method.STATUS, null );

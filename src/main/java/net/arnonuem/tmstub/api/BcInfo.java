@@ -21,47 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.arnonuem.tmstub.sys.hash;
-
-import java.security.NoSuchAlgorithmException;
-
-import org.cryptacular.bean.EncodingHashBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.google.protobuf.ByteString;
+package net.arnonuem.tmstub.api;
 
 /**
  * 
  * @author arnonuem
  */
-@Component
-public class HashUtil {
+public class BcInfo {
 	
-	private final EncodingHashBean encodingHashBean;
+	public String type;
+	public BcInfoData data;
 	
-	@Autowired
-	public HashUtil( EncodingHashBean encodingHashBean ) {
-		this.encodingHashBean = encodingHashBean;
-	}
-	
-	public String makeHash( String input ) throws NoSuchAlgorithmException {
-		//Nonce saltSource = new RBGNonce(8);
-		//TODO use EncryptedNonce???
-		String hexHash = encodingHashBean.hash( input/*, saltSource.generate()*/ );
-		return hexHash;
-	}
-	
-	public boolean compare( String hash, Object... data ) {
-		return encodingHashBean.compare( hash, data[0] );
-	}
-	
-	
-	public String convertBinaryBlockHash( ByteString input ) {
-		StringBuilder sb = new StringBuilder();
-		for( byte b : input.toByteArray() ) {
-			sb.append( String.format( "%02x", b ) );
-		}
-		return sb.toString();
-	}
 }

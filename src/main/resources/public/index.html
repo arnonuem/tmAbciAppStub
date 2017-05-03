@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BC Info</title>
+<style>
+body {
+	font-family: monospace;
+	font-size: 18px;
+	margin: 0;
+}
+
+#connStatus {
+	background: #c00;
+	color: #fff;
+	font-weight: bold;
+}
+
+#connStatus.open {
+	background: #0c0;
+}
+
+p {
+	padding: 10px 20px;
+	margin: 0;
+}
+</style>
+</head>
+<body>
+	<p id="connStatus">Waiting to connect to server...</p>
+
+	<div id="endblock"></div>
+
+	<script>
+		if (!window.console) {
+			console = {
+				log : function(s) {
+					document.getElementById('debug').innerHTML += '<li><pre>'
+							+ s + '</pre></li>';
+				}
+			};
+		}
+	</script>
+	<script src="EventSource.js"></script>
+	<!--script src="json2.js"></script-->
+	<script src="sse.js"></script>
+</body>
+</html>
