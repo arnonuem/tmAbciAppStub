@@ -12,7 +12,12 @@
 	
 	function updateBeginBlock( data ) {
 		document.getElementById('txdata').innerHTML = "";
-		document.getElementById('beginblock').innerHTML = "chain id: " + data.chainId + "<br>block height (header): " + data.height + "<br>block hash: " + data.hash;
+		document.getElementById('beginblock').innerHTML = "chain id: " + data.chainId + 
+			"<br>block height (header): " + data.height + 
+			"<br>block hash: " + data.hash + 
+			"<br>block time: " + data.blockTime +
+			"<br>TX count: " + data.numOfTxs;
+		;
 	}
 
 	function updateEndBlock( data ) {
