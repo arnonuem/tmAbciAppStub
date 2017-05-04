@@ -41,7 +41,7 @@ public class InfoService {
 	
 	public ResponseInfo process( RequestInfo req ) {
 		log.debug( "ResponseInfo default listener implementation" );
-		return ResponseInfo.newBuilder().setData( "NO_INFO" ).build();
+		return ResponseInfo.newBuilder().setData( "Tendermint ABCI application stub" ).setVersion( "0.1.0" ).build();
 	}
 	
 }

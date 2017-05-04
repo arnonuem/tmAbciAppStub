@@ -84,6 +84,11 @@ public class TmCommunicatorService {
 
 
 	public JSONRPCResult sendMessage( Method method, Message message ) {
+		if( !socketClient.isOpen() ) {
+			throw new RuntimeException( "No message will be sent because there is no open socket connection to tendermint" ); 
+		}
+		
+		
 		CompletableFuture<JSONRPCResult> future = new CompletableFuture<>();
 
 		try {

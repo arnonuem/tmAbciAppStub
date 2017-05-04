@@ -20,9 +20,30 @@
 	}
 	
 	function updateDeliverTx( data ) {
-		document.getElementById('txdata').innerHTML = "data: " + data.tx;
+		const d = JSON.parse( data.tx );
+		const date = formatDate( new Date( d.timestamp ) );
+		
+		document.getElementById('txdata').innerHTML = "sender: " + d.sender + "<br>receiver: " + d.receiver + "<br>data: " + d.data + "<br>time: " + date;
 	}
 
+
+	function formatDate( date ) {
+		var yyyy = date.getFullYear();
+		var mm = date.getMonth()+1; //January is 0!
+		var dd = date.getDate();
+		
+		var h = date.getHours();
+		var m = date.getMinutes();
+		var s = date.getSeconds();
+		
+		if(dd<10){ dd='0'+dd; } 
+		if(mm<10){ mm='0'+mm; }
+		if(m<10){ m='0'+m; }
+		if(s<10){ s='0'+s; }
+		
+		return dd+'.'+mm+'.'+yyyy+' '+h+':'+m+':'+s;
+	}
+	
 	var source = new EventSource('/api/bcinfo');
 	source.onopen = function( event ) { connectionOpen(true); };
 	source.onerror = function( event ) { connectionOpen(false); };
@@ -43,5 +64,6 @@
 			updateDeliverTx( payload.data );
 		}
 	};
+	
 	
 })();

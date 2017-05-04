@@ -115,11 +115,10 @@ public class ServerManagementResource {
 
 	
 	@PostMapping( "message" )
-	public String message( @RequestParam("data") String data ) throws NoSuchAlgorithmException {
+	public void message( @RequestParam("data") String data ) throws NoSuchAlgorithmException {
 		String bob = hashUtil.makeHash( "Bob" );
 		String alice = hashUtil.makeHash( "Alice" );
 		tmCommunicator.sendMessage( Method.BROADCAST_TX_ASYNC, new Message( bob, alice, data ) );
-		return "Message sent. See log for message content.";
 	}
 	
 }

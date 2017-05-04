@@ -31,6 +31,7 @@ import com.github.jtendermint.jabci.types.Types.RequestSetOption;
 import com.github.jtendermint.jabci.types.Types.ResponseSetOption;
 
 /**
+ * Modifies the configuration of the application
  * 
  * @author arnonuem
  */

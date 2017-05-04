@@ -40,6 +40,7 @@ import com.github.jtendermint.jabci.types.Types.ResponseDeliverTx;
 
 import net.arnonuem.tmstub.api.BcInfo;
 import net.arnonuem.tmstub.api.InfoDeliverTx;
+import net.arnonuem.tmstub.sys.CrossCuttingStatistics;
 import net.arnonuem.tmstub.sys.Message;
 import net.arnonuem.tmstub.sys.hash.HashUtil;
 
@@ -55,18 +56,24 @@ public class DeliverTxService {
 	private final SubscribableChannel pubSubChannel;
 	private final HashUtil hashUtil;
 	private final ObjectMapper mapper;
-	
+	private final CrossCuttingStatistics statistics;
 	
 	@Autowired
-	public DeliverTxService( SubscribableChannel pubSubChannel, HashUtil hashUtil, ObjectMapper mapper ) {
+	public DeliverTxService( SubscribableChannel pubSubChannel, HashUtil hashUtil, ObjectMapper mapper, CrossCuttingStatistics statistics ) {
 		this.pubSubChannel = pubSubChannel;
 		this.hashUtil = hashUtil;
 		this.mapper = mapper;
+		this.statistics = statistics;
 	}
 	
 
 	public ResponseDeliverTx process( RequestDeliverTx req ) {
 		log.debug( "Processing incoming message" );
+		
+		if( req.getTx().size() == 0 ) {
+      return ResponseDeliverTx.newBuilder().setCode(CodeType.BadNonce).setLog("transaction is empty").build();
+		}
+		
 		String data = new String( req.getTx().toByteArray() );
 
 		
@@ -83,10 +90,14 @@ public class DeliverTxService {
 			if( hashUtil.compare( message.sender, "Bob" ) && hashUtil.compare( message.receiver, "Alice" ) ) {
 				log.debug( "Sender was Bob and receiver is Alice" );
 			}
-			// TODO fire event or do something else with this message			
+
 		} catch( IOException e ) {
 			return ResponseDeliverTx.newBuilder().setCode( CodeType.InternalError ).build();
 		} 
+		
+		statistics.txCount++;
+		log.debug( "transactions made since startup: " + statistics.txCount );
+		
 		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
 	}
 
