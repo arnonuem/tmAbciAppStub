@@ -83,8 +83,10 @@ public class TSockListener implements InfoQueryListener, MempoolListener, Consen
 	private final EndBlockService svcEndBlock;
 	private final InitChainService svcInitChain;
 
+
 	@Autowired
-	public TSockListener( TmCommunicatorService svcTmCommunication, InfoService svcInfo, QueryService svcQuery, SetOptionService svcSetOption, CheckTxService svcCheckTx, BeginBlockService svcBeginBlock, CommitService svcCommit, DeliverTxService svcDeliverTx, EndBlockService svcEndBlock, InitChainService svcInitChain ) {
+	public TSockListener( TmCommunicatorService svcTmCommunication, InfoService svcInfo, QueryService svcQuery, SetOptionService svcSetOption, CheckTxService svcCheckTx, BeginBlockService svcBeginBlock,
+			CommitService svcCommit, DeliverTxService svcDeliverTx, EndBlockService svcEndBlock, InitChainService svcInitChain ) {
 		this.svcTmCommunication = svcTmCommunication;
 		this.svcInfo = svcInfo;
 		this.svcQuery = svcQuery;
@@ -96,63 +98,63 @@ public class TSockListener implements InfoQueryListener, MempoolListener, Consen
 		this.svcEndBlock = svcEndBlock;
 		this.svcInitChain = svcInitChain;
 	}
-	
-	
+
+
 	@Override
 	public ResponseInfo requestInfo( RequestInfo req ) {
 		svcTmCommunication.init(); // open a websocket to be able to send requests to tendermint
-		return svcInfo.noop();
+		return svcInfo.process( req );
 	}
 
 
 	@Override
 	public ResponseQuery requestQuery( RequestQuery req ) {
-		return svcQuery.noop();
+		return svcQuery.process( req );
 	}
 
 
 	@Override
 	public ResponseSetOption requestSetOption( RequestSetOption req ) {
-		return svcSetOption.noop();
+		return svcSetOption.process( req );
 	}
-	
-	
+
+
 	@Override
 	public ResponseCheckTx requestCheckTx( RequestCheckTx req ) {
-		return svcCheckTx.noop();
+		return svcCheckTx.process( req );
 	}
-	
-	
+
+
 	@Override
 	public ResponseInitChain requestInitChain( RequestInitChain req ) {
-		return svcInitChain.noop();
+		return svcInitChain.process( req );
 	}
-	
-	
+
+
 	@Override
 	public ResponseBeginBlock requestBeginBlock( RequestBeginBlock req ) {
 		return svcBeginBlock.process( req );
 	}
-	
-	
+
+
 	@Override
 	public ResponseDeliverTx receivedDeliverTx( RequestDeliverTx req ) {
 		return svcDeliverTx.process( req );
 	}
-	
-	
-	@Override
-	public ResponseEndBlock requestEndBlock( RequestEndBlock req ) {
-		return svcEndBlock.noop();
-	}
-	
+
 
 	@Override
-	public ResponseCommit requestCommit( RequestCommit requestCommit ) {
-		return svcCommit.noop();
+	public ResponseEndBlock requestEndBlock( RequestEndBlock req ) {
+		return svcEndBlock.process( req );
 	}
-	
-	
+
+
+	@Override
+	public ResponseCommit requestCommit( RequestCommit req ) {
+		return svcCommit.process( req );
+	}
+
+
 	@Override
 	public ResponseEcho requestEcho( RequestEcho req ) {
 		log.debug( "ResponseEcho default listener implementation" );

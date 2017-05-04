@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.github.jtendermint.jabci.types.Types.CodeType;
+import com.github.jtendermint.jabci.types.Types.RequestCommit;
 import com.github.jtendermint.jabci.types.Types.ResponseCommit;
 
 /**
@@ -39,7 +40,7 @@ public class CommitService {
 
 	private static final Logger log = LoggerFactory.getLogger( CommitService.class );
 	
-	public ResponseCommit noop() {
+	public ResponseCommit process( RequestCommit req ) {
 		log.trace( "ResponseCommit default listener implementation" );
 		return ResponseCommit.newBuilder().setCode( CodeType.OK ).build();
 	}

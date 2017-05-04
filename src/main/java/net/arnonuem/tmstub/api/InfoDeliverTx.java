@@ -27,10 +27,14 @@ package net.arnonuem.tmstub.api;
  * 
  * @author arnonuem
  */
-public class BcInfoData {
+public class InfoDeliverTx extends AbstractBcInfoData {
 
-	public long height;
-	public String hash;
-	public String chainId;
+	public String tx;
+
+	public InfoDeliverTx() {}
+
+	public InfoDeliverTx( String tx ) {
+		this.tx = tx;
+	}
 	
 }

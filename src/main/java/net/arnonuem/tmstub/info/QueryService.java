@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.github.jtendermint.jabci.types.Types.CodeType;
+import com.github.jtendermint.jabci.types.Types.RequestQuery;
 import com.github.jtendermint.jabci.types.Types.ResponseQuery;
 
 /**
@@ -39,7 +40,8 @@ public class QueryService {
 
 	private static final Logger log = LoggerFactory.getLogger( QueryService.class );
 
-	public ResponseQuery noop() {
+	public ResponseQuery process( RequestQuery req ) {
+		System.err.println( new String( req.getQuery().toByteArray() ) );
 		log.debug( "ResponseQuery default listener implementation" );
 		return ResponseQuery.newBuilder().setCode( CodeType.OK ).build();
 	}

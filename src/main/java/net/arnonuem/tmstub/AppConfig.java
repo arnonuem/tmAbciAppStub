@@ -41,6 +41,7 @@ import org.springframework.integration.dsl.channel.MessageChannels;
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.messaging.SubscribableChannel;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jtmsp.websocket.Websocket;
 import com.github.jtmsp.websocket.WebsocketException;
 import com.github.jtmsp.websocket.WebsocketStatus;
@@ -53,6 +54,11 @@ import com.github.jtmsp.websocket.WebsocketStatus;
 public class AppConfig {
 
 	private static final Logger log = LoggerFactory.getLogger( AppConfig.class );
+	
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
+	}
 	
 	@Bean
 	public Websocket websocket() {

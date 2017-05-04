@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.github.jtendermint.jabci.types.Types.RequestSetOption;
 import com.github.jtendermint.jabci.types.Types.ResponseSetOption;
 
 /**
@@ -38,7 +39,7 @@ public class SetOptionService {
 
 	private static final Logger log = LoggerFactory.getLogger( SetOptionService.class );
 
-	public ResponseSetOption noop() {
+	public ResponseSetOption process( RequestSetOption req ) {
 		log.debug( "ResponseSetOption default listener implementation" );
 		return ResponseSetOption.newBuilder().build();
 	}

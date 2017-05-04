@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jtmsp.websocket.Websocket;
 import com.github.jtmsp.websocket.WebsocketException;
 import com.github.jtmsp.websocket.jsonrpc.JSONRPC;
@@ -40,7 +42,6 @@ import com.github.jtmsp.websocket.jsonrpc.JSONRPCResult;
 import com.github.jtmsp.websocket.jsonrpc.Method;
 import com.github.jtmsp.websocket.jsonrpc.calls.EmptyParam;
 import com.github.jtmsp.websocket.jsonrpc.calls.StringParam;
-import com.google.gson.Gson;
 
 /**
  * 
@@ -52,13 +53,13 @@ public class TmCommunicatorService {
 	private static final Logger log = LoggerFactory.getLogger( TmCommunicatorService.class );
 
 	private final Websocket socketClient;
-
-	private Gson gson = new Gson();
+	private final ObjectMapper mapper;
 
 
 	@Autowired
-	public TmCommunicatorService( Websocket socketClient ) {
+	public TmCommunicatorService( Websocket socketClient, ObjectMapper mapper ) {
 		this.socketClient = socketClient;
+		this.mapper = mapper;
 	}
 
 
@@ -73,7 +74,7 @@ public class TmCommunicatorService {
 				log.info( "Connecting websocket" );
 				try {
 					socketClient.reconnectWebsocket();
-				} catch (WebsocketException e) {
+				} catch( WebsocketException e ) {
 					log.error( e.getMessage(), e );
 				}
 			} else
@@ -81,28 +82,18 @@ public class TmCommunicatorService {
 		}, time, unit );
 	}
 
-	// public void sendMessage( Message message ) {
-	// JSONRPC rpc = new StringParam( Method.BROADCAST_TX_ASYNC, gson.toJson(message).getBytes() );
-	//
-	// socketClient.sendMessage(rpc, e -> {
-	// //no interest
-	// System.err.println( e );
-	// });
-	//
-	// }
-
 
 	public JSONRPCResult sendMessage( Method method, Message message ) {
 		CompletableFuture<JSONRPCResult> future = new CompletableFuture<>();
-		
-		JSONRPC rpc = message != null ? new StringParam( method, gson.toJson( message ).getBytes() ) : new EmptyParam( method );
-		socketClient.sendMessage( rpc, res -> {		
-			future.complete( (JSONRPCResult)res );
-		} );
-		
+
 		try {
+			JSONRPC rpc = message != null ? new StringParam( method, mapper.writeValueAsBytes( message ) ) : new EmptyParam( method );
+			socketClient.sendMessage( rpc, res -> {
+				future.complete( (JSONRPCResult) res );
+			} );
+			
 			return future.get();
-		} catch( InterruptedException | ExecutionException e ) {
+		} catch( InterruptedException | ExecutionException | JsonProcessingException e ) {
 			throw new RuntimeException( e );
 		}
 	}

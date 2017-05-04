@@ -11,9 +11,17 @@
 	}
 	
 	function updateBeginBlock( data ) {
-		document.getElementById('endblock').innerHTML = "chain id: " + data.chainId + "<br>block height (header): " + data.height + "<br>block hash: " + data.hash;
+		document.getElementById('txdata').innerHTML = "";
+		document.getElementById('beginblock').innerHTML = "chain id: " + data.chainId + "<br>block height (header): " + data.height + "<br>block hash: " + data.hash;
 	}
 
+	function updateEndBlock( data ) {
+		document.getElementById('endblock').innerHTML = "block height: " + data.height;
+	}
+	
+	function updateDeliverTx( data ) {
+		document.getElementById('txdata').innerHTML = "data: " + data.tx;
+	}
 
 	var source = new EventSource('/api/bcinfo');
 	source.onopen = function( event ) { connectionOpen(true); };
@@ -27,6 +35,12 @@
 		var payload = JSON.parse( event.data );
 		if( 'beginblock' === payload.type ) {
 			updateBeginBlock( payload.data );
+		} 
+		if( 'endblock' === payload.type ) {
+			updateEndBlock( payload.data );
+		}
+		if( 'delivertx' === payload.type ) {
+			updateDeliverTx( payload.data );
 		}
 	};
 	

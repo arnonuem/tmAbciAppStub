@@ -23,16 +23,23 @@
  */
 package net.arnonuem.tmstub.consensus;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jtendermint.jabci.types.Types.CodeType;
 import com.github.jtendermint.jabci.types.Types.RequestDeliverTx;
 import com.github.jtendermint.jabci.types.Types.ResponseDeliverTx;
-import com.google.gson.Gson;
 
+import net.arnonuem.tmstub.api.BcInfo;
+import net.arnonuem.tmstub.api.InfoDeliverTx;
 import net.arnonuem.tmstub.sys.Message;
 import net.arnonuem.tmstub.sys.hash.HashUtil;
 
@@ -44,27 +51,53 @@ import net.arnonuem.tmstub.sys.hash.HashUtil;
 public class DeliverTxService {
 
 	private static final Logger log = LoggerFactory.getLogger( DeliverTxService.class );
+
+	private final SubscribableChannel pubSubChannel;
+	private final HashUtil hashUtil;
+	private final ObjectMapper mapper;
 	
-	private Gson gson = new Gson();
 	
-	@Autowired HashUtil hashUtil;
-	
-	public ResponseDeliverTx noop() {
-		log.trace( "ResponseDeliverTx default listener implementation" );
-		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
+	@Autowired
+	public DeliverTxService( SubscribableChannel pubSubChannel, HashUtil hashUtil, ObjectMapper mapper ) {
+		this.pubSubChannel = pubSubChannel;
+		this.hashUtil = hashUtil;
+		this.mapper = mapper;
 	}
 	
+
 	public ResponseDeliverTx process( RequestDeliverTx req ) {
 		log.debug( "Processing incoming message" );
 		String data = new String( req.getTx().toByteArray() );
-		Message message = gson.fromJson( data, Message.class );
-		//TODO fire event or do something else with this message
-		log.debug( message.toString() );
+
 		
-		if( hashUtil.compare( message.sender, "Bob" ) && hashUtil.compare( message.receiver, "Alice" ) ) {
-			log.debug( "Sender was Bob and receiver is Alice" );
-		}
+		BcInfo info = new BcInfo();
+		info.type = "delivertx";
+		info.data = new InfoDeliverTx( data );
+
+		pubSubChannel.send( new GenericMessage<>( createPayload( info ) ) );
+		
+		try {
+			Message message = mapper.readValue( data, Message.class );
+			log.debug( message.toString() );
+
+			if( hashUtil.compare( message.sender, "Bob" ) && hashUtil.compare( message.receiver, "Alice" ) ) {
+				log.debug( "Sender was Bob and receiver is Alice" );
+			}
+			// TODO fire event or do something else with this message			
+		} catch( IOException e ) {
+			return ResponseDeliverTx.newBuilder().setCode( CodeType.InternalError ).build();
+		} 
 		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
+	}
+
+	
+	private String createPayload( Object input ) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString( input );
+		} catch( JsonProcessingException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 	
 }

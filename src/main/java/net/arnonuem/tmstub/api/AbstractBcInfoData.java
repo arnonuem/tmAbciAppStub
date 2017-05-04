@@ -21,27 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.arnonuem.tmstub.info;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.github.jtendermint.jabci.types.Types.RequestInfo;
-import com.github.jtendermint.jabci.types.Types.ResponseInfo;
+package net.arnonuem.tmstub.api;
 
 /**
  * 
  * @author arnonuem
  */
-@Service
-public class InfoService {
-	
-	private static final Logger log = LoggerFactory.getLogger( InfoService.class );
-	
-	public ResponseInfo process( RequestInfo req ) {
-		log.debug( "ResponseInfo default listener implementation" );
-		return ResponseInfo.newBuilder().setData( "NO_INFO" ).build();
-	}
+public abstract class AbstractBcInfoData {
 	
 }

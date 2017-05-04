@@ -25,9 +25,18 @@ package net.arnonuem.tmstub.consensus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jtendermint.jabci.types.Types.RequestEndBlock;
 import com.github.jtendermint.jabci.types.Types.ResponseEndBlock;
+
+import net.arnonuem.tmstub.api.BcInfo;
+import net.arnonuem.tmstub.api.InfoEndBlock;
 
 /**
  * 
@@ -37,10 +46,36 @@ import com.github.jtendermint.jabci.types.Types.ResponseEndBlock;
 public class EndBlockService {
 
 	private static final Logger log = LoggerFactory.getLogger( EndBlockService.class );
-	
-	public ResponseEndBlock noop() {
-		log.trace( "ResponseEndBlock default listener implementation" );
+
+	private final SubscribableChannel pubSubChannel;
+
+
+	@Autowired
+	public EndBlockService( SubscribableChannel pubSubChannel ) {
+		this.pubSubChannel = pubSubChannel;
+	}
+
+
+	public ResponseEndBlock process( RequestEndBlock req ) {
+		long blockHeight = req.getHeight();
+
+		BcInfo info = new BcInfo();
+		info.type = "endblock";
+		info.data = new InfoEndBlock( blockHeight );
+
+		pubSubChannel.send( new GenericMessage<>( createPayload( info ) ) );
+
 		return ResponseEndBlock.newBuilder().build();
 	}
-	
+
+
+	private String createPayload( Object input ) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString( input );
+		} catch( JsonProcessingException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
 }

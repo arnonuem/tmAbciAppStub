@@ -30,6 +30,6 @@ package net.arnonuem.tmstub.api;
 public class BcInfo {
 	
 	public String type;
-	public BcInfoData data;
+	public AbstractBcInfoData data;
 	
 }
