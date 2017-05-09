@@ -16,7 +16,8 @@
 			"<br>block height (header): " + data.height + 
 			"<br>block hash: " + data.hash + 
 			"<br>block time: " + data.blockTime +
-			"<br>TX count: " + data.numOfTxs;
+			"<br>average block time: " + data.avgBlockTime + " s" +
+			"<br>TX count: " + data.numOfTxs
 		;
 	}
 

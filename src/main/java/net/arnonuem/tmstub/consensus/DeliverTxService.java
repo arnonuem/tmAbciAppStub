@@ -95,8 +95,8 @@ public class DeliverTxService {
 			return ResponseDeliverTx.newBuilder().setCode( CodeType.InternalError ).build();
 		} 
 		
-		statistics.txCount++;
-		log.debug( "transactions made since startup: " + statistics.txCount );
+		statistics.increaseTxCount();
+		log.debug( "transactions made since startup: " + statistics.txCount() );
 		
 		return ResponseDeliverTx.newBuilder().setCode( CodeType.OK ).build();
 	}

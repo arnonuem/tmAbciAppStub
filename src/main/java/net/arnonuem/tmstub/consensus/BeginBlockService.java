@@ -37,6 +37,7 @@ import com.github.jtendermint.jabci.types.Types.ResponseBeginBlock;
 
 import net.arnonuem.tmstub.api.BcInfo;
 import net.arnonuem.tmstub.api.InfoBeginBlock;
+import net.arnonuem.tmstub.sys.CrossCuttingStatistics;
 import net.arnonuem.tmstub.sys.hash.HashUtil;
 
 /**
@@ -50,26 +51,32 @@ public class BeginBlockService {
 
 	private final SubscribableChannel pubSubChannel;
 	private final HashUtil hashUtil;
-
+	private final CrossCuttingStatistics statistics;
 
 	@Autowired
-	public BeginBlockService( SubscribableChannel pubSubChannel, HashUtil hashUtil ) {
+	public BeginBlockService( SubscribableChannel pubSubChannel, HashUtil hashUtil, CrossCuttingStatistics statistics ) {
 		this.pubSubChannel = pubSubChannel;
 		this.hashUtil = hashUtil;
+		this.statistics = statistics;
 	}
 
 
 	public ResponseBeginBlock process( RequestBeginBlock req ) {
 		String blockchainID = req.getHeader().getChainId();
 		long blockHeight = req.getHeader().getHeight();
+		long numOfTxs = req.getHeader().getNumTxs();
+		long blockTime = req.getHeader().getTime();
 		String blockHeaderHash = hashUtil.convertBinaryBlockHash( req.getHash() );
+		
+		statistics.updateBeginBlockTime( blockTime );
+		statistics.updateBlockHeight( blockHeight );
 
 		BcInfo info = new BcInfo();
 		info.type = "beginblock";
-		info.data = new InfoBeginBlock( blockHeight, blockHeaderHash, blockchainID );
-
-		pubSubChannel.send( new GenericMessage<>( createPayload( info ) ) );
-
+		info.data = new InfoBeginBlock( blockHeight, blockHeaderHash, blockchainID, numOfTxs, blockTime, statistics.avgBlockTime() );		
+		
+		pubSubChannel.send( new GenericMessage<>( createPayload( info ) ) );		
+		
 		return ResponseBeginBlock.newBuilder().build();
 	}
 

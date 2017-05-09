@@ -33,16 +33,18 @@ public class InfoBeginBlock extends AbstractBcInfoData {
 	public String hash;
 	public String chainId;
 	public long numOfTxs;
-	public long blockTime;		
+	public long blockTime;
+	public double avgBlockTime;
 	
 	public InfoBeginBlock() {}
 
-	public InfoBeginBlock( long height, String hash, String chainId, long numOfTxs, long blockTime ) {
+	public InfoBeginBlock( long height, String hash, String chainId, long numOfTxs, long blockTime, double avgBlockTime ) {
 		this.height = height;
 		this.hash = hash;
 		this.chainId = chainId;
 		this.numOfTxs = numOfTxs;
 		this.blockTime = blockTime;
+		this.avgBlockTime = avgBlockTime;
 	}
 	
 }

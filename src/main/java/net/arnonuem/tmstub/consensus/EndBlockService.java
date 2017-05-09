@@ -37,6 +37,7 @@ import com.github.jtendermint.jabci.types.Types.ResponseEndBlock;
 
 import net.arnonuem.tmstub.api.BcInfo;
 import net.arnonuem.tmstub.api.InfoEndBlock;
+import net.arnonuem.tmstub.sys.CrossCuttingStatistics;
 
 /**
  * 
@@ -48,11 +49,12 @@ public class EndBlockService {
 	private static final Logger log = LoggerFactory.getLogger( EndBlockService.class );
 
 	private final SubscribableChannel pubSubChannel;
-
+	private final CrossCuttingStatistics statistics;
 
 	@Autowired
-	public EndBlockService( SubscribableChannel pubSubChannel ) {
+	public EndBlockService( SubscribableChannel pubSubChannel, CrossCuttingStatistics statistics ) {
 		this.pubSubChannel = pubSubChannel;
+		this.statistics = statistics;
 	}
 
 
@@ -64,7 +66,6 @@ public class EndBlockService {
 		info.data = new InfoEndBlock( blockHeight );
 
 		pubSubChannel.send( new GenericMessage<>( createPayload( info ) ) );
-
 		return ResponseEndBlock.newBuilder().build();
 	}
 
