@@ -1,3 +1,6 @@
+# TODO
+https://github.com/tendermint/tendermint/blob/master/CHANGELOG.md#0100-may-18-2017
+
 # tmAbciAppStub
 Tendermint ABCI Java application stub for rapdid prototyping Tendermint apps.
 
@@ -15,3 +18,4 @@ Run Tendermint `tendermint node` (see Tendermint docs). Tendermint should connec
 ## development
 All requests made by Tendermint are mapped into services, except `echo` and `flush`.
 When implementing the desired app just wire the services and replace the `noop` methods with the desired content.
+
