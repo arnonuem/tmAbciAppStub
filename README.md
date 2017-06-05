@@ -4,7 +4,7 @@ https://github.com/tendermint/tendermint/blob/master/CHANGELOG.md#0100-may-18-20
 # tmAbciAppStub
 Tendermint ABCI Java application stub for rapdid prototyping Tendermint apps.
 
-Currently based on Tendermint 0.9.0.
+Currently based on Tendermint 0.9.0 and its Java implementation https://github.com/jTendermint/jabci
 
 ## frameworks
 The application is based on Spring Boot and JTendermint.
